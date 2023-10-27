@@ -1,3 +1,28 @@
-- clean: []
-- link: {}
-- shell: []
+- defaults:
+    shell:
+      stdin: true # input password if required
+      stdout: true
+      stderr: true
+    clean:
+      recursive: true # must turn off in ~/
+  
+- clean:
+    ~/:
+      recursive: false
+# recursive paths
+- clean:
+    - "~/.oh-my-zsh"
+
+- link:
+    ~/.zsh:
+    ~/.zshrc: zsh/zshrc
+
+
+- shell:
+  - [git submodule sync --recursive, "Sync submodule"]
+  - [git submodule update --init --recursive, "Init submodule"]
+  - [
+    # need zsh available
+    if test "$(basename -- "$SHELL")" != "zsh"; then chsh -s "$(which zsh)"; fi,
+    "Change default shell.",
+  ]
