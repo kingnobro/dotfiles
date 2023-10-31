@@ -15,7 +15,7 @@ export ZSH="${HOME}/.zsh/oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-# ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -90,7 +90,7 @@ plugins=(
     extract
     command-not-found
     # autojump
-    zsh-vi-mode
+    # zsh-vi-mode
     zsh-autosuggestions
     zsh-syntax-highlighting # This must go at the end
 )
@@ -145,9 +145,9 @@ ZLE_RPROMPT_INDENT=0
 export EDITOR=vim
 
 # Allow local customizations in the ~/.shell_local_after file (such as conda path)
-# if [ -f ~/.shell_local_after ]; then
-#     source ~/.shell_local_after
-# fi
+if [ -f ~/.shell_local_after ]; then
+    source ~/.shell_local_after
+fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 # [[ ! -f ~/.zsh/p10k.zsh ]] || source ~/.zsh/p10k.zsh

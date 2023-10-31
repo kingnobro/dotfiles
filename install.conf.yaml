@@ -26,3 +26,8 @@
     if test "$(basename -- "$SHELL")" != "zsh"; then chsh -s "$(which zsh)"; fi,
     "Change default shell.",
   ]
+  - command: |
+      if ! grep -Fq "# <<< conda initialize <<<" ~/.shell_local_after; then
+        conda init zsh > /dev/null && tail -n 15 ~/.zshrc >> ~/.shell_local_after && git checkout -- zsh/zshrc
+      fi
+    description: Init conda and move changes to shell_local_after. Assuming conda init is last 15 lines.
