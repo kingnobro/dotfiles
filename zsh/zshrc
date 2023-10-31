@@ -1,9 +1,9 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
@@ -133,9 +133,9 @@ ZLE_RPROMPT_INDENT=0
 # export ARCHFLAGS="-arch x86_64"
 
 # source ~/.shell/admin.sh
-# source ~/.shell/aliases.sh
+source ~/.shell/aliases.sh
 # source ~/.shell/external.sh
-# source ~/.shell/functions.sh
+source ~/.shell/functions.sh
 # source ~/.shell/proxy.sh
 
 # path_prepend "$HOME/.local/bin"

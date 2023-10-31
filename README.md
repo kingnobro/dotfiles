@@ -1,58 +1,86 @@
-Dotfiles Template
-=================
+# My Public Dotfiles
 
-This is a template repository for bootstrapping your dotfiles with [Dotbot][dotbot].
+This repository contains public dotfiles including various configuration files, shell utilies, plugins, etc (i.e. dotfiles). There is also a private repository containing private dotfiles like ssh info. 
 
-To get started, you can [create a new repository from this template][template]
-(or you can [fork][fork] this repository, if you prefer). You can probably
-delete this README and rename your version to something like just `dotfiles`.
+I'm using [Dotbot](https://github.com/anishathalye/dotbot) to manage dotfiles. [Tutorial](https://www.anishathalye.com/2014/08/03/managing-your-dotfiles/) on Dotbot by [Anish](https://www.anishathalye.com/) (the author, also one of the lecturers of [MIT-Missing-Semester](https://missing.csail.mit.edu/)).
 
-In general, you should be using symbolic links for everything, and using git
-submodules whenever possible.
+There are many different approaches other than Dotbot, see https://dotfiles.github.io/
 
-To keep submodules at their proper versions, you could include something like
-`git submodule update --init --recursive` in your `install.conf.yaml`.
+## Note
 
-To upgrade your submodules to their latest versions, you could periodically run
-`git submodule update --init --remote`.
+- zsh plugins are not placed in default folder (`$ZSH/custom`), but in `ZSH_CUSTOM="$HOME/.zsh/custom"`. The default position is inside oh-my-zsh repo, causing repos (omz vs plugins) nesting with each other and hard to maintain in dotbot (clone order, dirty repo and other problems). If there is a better way, please let me know.
+- conda
+    - `conda init` shoud be placed in `~/.shell_local_after`. This is now automated by assuming `conda init zsh` append 15 lines to `~/.zshrc`.
+    - assuming conda envs are installed in `~/.conda`, use `conda_pull` to rsync from remote.
+- vscode settings are not maintain by dotfiles, vscode has its own way to sync its [settings](https://code.visualstudio.com/docs/editor/settings-sync).
+    - If you are working with vscode remote, basically you don't need to sync your settings because you settings is used on remote [by default](https://code.visualstudio.com/docs/remote/ssh#_ssh-hostspecific-settings), but you should [specify what extensions to install on remote](https://code.visualstudio.com/docs/remote/ssh#_always-installed-extensions) for that extensions are not automatically installed on remote.
+- tmux:
+    - [oh-my-tmux](https://github.com/gpakosz/.tmux#bindings)
+    - using Fira Font as powerline font for tmux
 
-Inspiration
------------
+## Cheat Sheet
 
-If you're looking for inspiration for how to structure your dotfiles or what
-kinds of things you can include, you could take a look at some repos using
-Dotbot.
+### Sync all dotfiles to a new machine
 
-* [anishathalye's dotfiles][anishathalye_dotfiles]
-* [csivanich's dotfiles][csivanich_dotfiles]
-* [m45t3r's dotfiles][m45t3r_dotfiles]
-* [alexwh's dotfiles][alexwh_dotfiles]
-* [azd325's dotfiles][azd325_dotfiles]
-* [wazery's dotfiles][wazery_dotfiles]
-* [thirtythreeforty's dotfiles][thirtythreeforty_dotfiles]
+First, [generate new ssh key](https://docs.github.com/cn/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) and [add it to github](https://docs.github.com/cn/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) (more instructions [here](https://github.com/calvinbui/dotfiles)). Then, clone and install dotfiles.
 
-And there are about [700 more here][dotbot-users].
+```bash
+git clone git@github.com:kingnobro/dotfiles.git
+cd dotfiles
+./install
+```
 
-If you're using Dotbot and you'd like to include a link to your dotfiles here
-as an inspiration to others, please submit a pull request.
+### Modify dotfiles
 
-License
--------
+Add a new dotfile `~/.foo` :
 
-This software is hereby released into the public domain. That means you can do
-whatever you want with it without restriction. See `LICENSE.md` for details.
+```bash
+mv ~/.foo ~/.dotfiles/foo
+# Add a new link for `foo` in install.conf.yaml
+~/.dotfiles/install
+# commit changes to git
+```
 
-That being said, I would appreciate it if you could maintain a link back to
-Dotbot (or this repository) to help other people discover Dotbot.
+Add a git submodule (eg. plugins) `~/vim/foo` :
 
-[dotbot]: https://github.com/anishathalye/dotbot
-[fork]: https://github.com/anishathalye/dotfiles_template/fork
-[template]: https://github.com/anishathalye/dotfiles_template/generate
-[anishathalye_dotfiles]: https://github.com/anishathalye/dotfiles
-[csivanich_dotfiles]: https://github.com/csivanich/dotfiles
-[m45t3r_dotfiles]: https://github.com/m45t3r/dotfiles
-[alexwh_dotfiles]: https://github.com/alexwh/dotfiles
-[azd325_dotfiles]: https://github.com/Azd325/dotfiles
-[wazery_dotfiles]: https://github.com/wazery/dotfiles
-[thirtythreeforty_dotfiles]: https://github.com/thirtythreeforty/dotfiles
-[dotbot-users]: https://github.com/anishathalye/dotbot/wiki/Users
+```bash
+cd ~/.dotfiles
+mkdir -p vim  # make parent directory
+# If submodule is already cloned to there, rm -rf it first
+git submodule add ${git_link_to_foo} vim/foo  # add submodule, specify path explicitly
+# Add a new link for `vim` in install.conf.yaml
+# commit changes to git
+```
+
+Delete all dotfiles installed by this repo:
+
+```bash
+./uninstall
+```
+
+Upgrade all submodules:
+
+```bash
+git submodule update --recursive --remote
+# commit changes
+# on another machine, run dfu, that is:
+git pull
+./install  # the key is: git submodule sync --recursive
+```
+
+## My Tricks
+
+If a directory is managed by both public and private Dotbot repos(eg. `~/.ssh`, `~/.config` etc.), then you can't directly symlink the directory due to conflict. The solution is to link each file in these directories, explicitly or using wildcard(glob).
+
+<!-- 
+You can create a symlink inside a git submodule. See `~/.oh-my-zsh/custom/` . Note:
+- The symlink path should be ignored in the submodule.
+- The symlink should be created after clone (submodule update) , order specified in `install.conf.yaml` . If clone failed during install, uninstall all symlinks (`./uninstall`), then clone/install again. 
+-->
+
+## TODO
+
+Extra initialization steps after `./install` . They are not yet covered by Dotbot, still working on it to automate.
+
+- tldr
+- submodule init shoud be placed before file mapping
