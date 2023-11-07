@@ -138,3 +138,9 @@ _clean_ckpt() {
 inotify-info() {
     _inotify-info "$@" | less -S
 }
+
+cuda () {
+    local devs=$1
+    shift
+    CUDA_VISIBLE_DEVICES="$devs" "$@"
+}
